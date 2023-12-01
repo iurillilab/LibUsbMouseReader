@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.8.1"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:ipy="clr-namespace:Bonsai.Scripting.IronPython;assembly=Bonsai.Scripting.IronPython"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="WorkflowInput" TypeArguments="sys:String">
+        <Name>Source1</Name>
+      </Expression>
+      <Expression xsi:type="WorkflowInput" TypeArguments="sys:String">
+        <Name>Source2</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Zip" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Timestamp" />
+      </Expression>
+      <Expression xsi:type="ipy:PythonTransform">
+        <ipy:Name>Filename Generator</ipy:Name>
+        <ipy:Script>@returns(str)
+def process(value):
+  values, timestamp = value.Value, value.Timestamp
+  folder, mouse_id = values
+
+  #subfolder = str(timestamp.Year) + str(timestamp.Month) + str(timestamp.Day)
+  #subsubfolder = str(timestamp.Hour) + str(timestamp.Minute) + str(timestamp.Second)
+
+  subfolder = "%04d" % (timestamp.Year,) + "%02d" % (timestamp.Month,) + "%02d" % (timestamp.Day,)
+  subsubfolder = "%02d" % (timestamp.Hour,) + "%02d" % (timestamp.Minute,) + "%02d" % (timestamp.Second,)
+  
+
+  full_name = folder + "\\" + mouse_id + "\\" + subfolder + "\\" + subsubfolder
+  print(full_name)
+  return full_name</ipy:Script>
+      </Expression>
+      <Expression xsi:type="WorkflowOutput" />
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="2" Label="Source1" />
+      <Edge From="1" To="2" Label="Source2" />
+      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

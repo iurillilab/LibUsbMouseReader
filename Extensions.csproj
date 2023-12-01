@@ -9,4 +9,8 @@
     <PackageReference Include="Huddly.LibUsbDotNet" Version="2.2.30" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="MouseOpen\" />
+  </ItemGroup>
+
 </Project>
